@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width; initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AfterGlow | 个人自我介绍</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* 整体默认深色主题 + 支持自定义背景 */
+        body {
+            min-height: 100vh;
+            background-color: #333538;
+            background-image: var(--bg-img, none);
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            font-family: "ZCOOL KuaiLe", cursive;
+            padding-top: 80px;
+            padding-bottom: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 24px;
+            overflow-x: hidden;
+            transition: background-color 0.4s ease;
+        }
+
+        /* 浅色模式样式 */
+        body.light-mode {
+            background-color: #f5f6f8;
+        }
+        body.light-mode .avatar-section,
+        body.light-mode .name-section,
+        body.light-mode .quote-section,
+        body.light-mode .edu-section,
+        body.light-mode .intro-section,
+        body.light-mode .honor-section,
+        body.light-mode .sentence-section,
+        body.light-mode .visit-stat {
+            background: rgba(0,0,0,0.06);
+        }
+        body.light-mode .edu-text,
+        body.light-mode .intro-text,
+        body.light-mode .quote,
+        body.light-mode .honor-title,
+        body.light-mode .sentence-title,
+        body.light-mode .visit-stat {
+            color: #222;
+        }
+        body.light-mode footer {
+            color: #555;
+        }
+
+        /* ========== 管理员全屏锁屏 ========== */
+        .admin-lock-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(12px);
+            z-index: 99999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s ease;
+        }
+        .admin-lock-screen.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        .lock-box {
+            width: 90%;
+            max-width: 380px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 20px;
+            padding: 40px 30px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.15);
+            transition: transform 0.2s ease;
+        }
+        /* 密码错误抖动动画 */
+        .lock-box.error-shake{
+            animation: shake 0.4s ease;
+        }
+        @keyframes shake{
+            0%,100%{transform: translateX(0);}
+            20%{transform: translateX(-8px);}
+            40%{transform: translateX(8px);}
+            60%{transform: translateX(-6px);}
+            80%{transform: translateX(6px);}
+        }
+        .lock-title {
+            font-size: 24px;
+            color: #fff;
+            margin-bottom: 30px;
+            letter-spacing: 1px;
+        }
+        .lock-input {
+            width: 100%;
+            padding: 14px 18px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 16px;
+            outline: none;
+            text-align: center;
+            margin-bottom: 20px;
+            font-family: "ZCOOL KuaiLe", cursive;
+        }
+        .lock-input:focus {
+            border-color: #7B68EE;
+            box-shadow: 0 0 8px rgba(123,104,238,0.4);
+        }
+        .lock-btn {
+            width: 100%;
+            padding: 14px;
+            background: #7B68EE;
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: "ZCOOL KuaiLe", cursive;
+        }
+        .lock-btn:hover {
+            background: #5B93FF;
+            transform: scale(1.03);
+        }
+        .lock-tip {
+            margin-top: 15px;
+            color: #aaa;
+            font-size: 14px;
+        }
+
+        /* ========== 关于本站自定义弹窗 ========== */
+        .about-mask {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.75);
+            backdrop-filter: blur(8px);
+            z-index: 99998;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: 0.3s ease;
+        }
+        .about-mask.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        .about-box {
+            background: #222;
+            padding: 35px 30px;
+            border-radius: 16px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        /* AfterGlow 蓝紫流动渐变 */
+        .text-ag {
+            font-size: 22px;
+            font-weight: bold;
+            background: linear-gradient(90deg,#5B93FF,#9D7DFF,#7B68EE,#5B93FF);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: gradientFlow 3s linear infinite;
+            margin: 10px 0;
+        }
+        /* BR 粉红流动渐变 */
+        .text-br {
+            font-size: 22px;
+            font-weight: bold;
+            background: linear-gradient(90deg,#ff7eb9,#ff65a3,#ff87c1,#ff7eb9);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: gradientFlow 3s linear infinite;
+            margin: 10px 0 20px;
+        }
+        @keyframes gradientFlow {
+            0%{background-position:0% 50%;}
+            50%{background-position:100% 50%;}
+            100%{background-position:0% 50%;}
+        }
+        .about-close {
+            padding: 10px 28px;
+            background: #7B68EE;
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        /* ========== 页面加载动画 ========== */
+        .loading-wrap {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #333538;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.6s ease, visibility 0.6s ease;
+        }
+        .loading-wrap.hide {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+        .loading-circle {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(123,104,238,0.2);
+            border-top-color: #7B68EE;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+        @keyframes spin {
+            to{transform: rotate(360deg);}
+        }
+        .loading-text {
+            font-size: 20px;
+            background: linear-gradient(90deg,#5B93FF,#9D7DFF);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: dynamicGradient 2s ease infinite;
+        }
+
+        /* 顶部导航 */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 75px;
+            background: rgba(255,255,255,0.85);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            z-index: 999;
+        }
+
+        .logo-text {
+            font-family: 'Poppins', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            background: linear-gradient(90deg, #5B93FF, #9D7DFF);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 1px 1px 5px rgba(0,0,0,0.15);
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .search-input {
+            padding: 6px 12px;
+            border: 1px solid #ccc;
+            border-radius: 30px;
+            outline: none;
+            width: 140px;
+            transition: all 0.3s ease;
+            font-family: "ZCOOL KuaiLe", cursive;
+            font-size: 14px;
+        }
+        .search-input:focus {
+            border-color: #7B68EE;
+            box-shadow: 0 0 6px rgba(123,104,238,0.3);
+        }
+
+        .menu-btn {
+            padding: 6px 12px;
+            background: #7B68EE;
+            color: #fff;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            font-family: "ZCOOL KuaiLe", cursive;
+        }
+        .menu-btn:hover {
+            background: #5B93FF;
+            transform: scale(1.05);
+        }
+
+        /* ========== 侧边弹出菜单 ========== */
+        .menu-mask {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.4);
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: 0.3s ease;
+        }
+        .menu-mask.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .side-menu {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 280px;
+            height: 100%;
+            background: #2c2e31;
+            backdrop-filter: blur(15px);
+            padding: 30px 20px;
+            z-index: 1001;
+            transform: translateX(100%);
+            transition: transform 0.4s ease;
+        }
+        .side-menu.show {
+            transform: translateX(0);
+        }
+
+        .menu-time {
+            text-align: center;
+            padding: 20px 0;
+            margin-bottom: 25px;
+            border-bottom: 1px solid rgba(255,255,255,0.15);
+        }
+        .menu-time p:nth-child(1) {
+            font-size: 28px;
+            color: #fff;
+            margin-bottom: 8px;
+        }
+        .menu-time p:nth-child(2) {
+            font-size: 16px;
+            color: #aaa;
+        }
+
+        .menu-func-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .func-item {
+            width: 100%;
+            padding: 14px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 12px;
+            color: #eee;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.3s ease;
+        }
+        .func-item:hover {
+            background: #7B68EE;
+            transform: translateX(-6px);
+        }
+        /* 管理员专属项默认隐藏 */
+        .admin-only {
+            display: none;
+        }
+        .admin-only.show {
+            display: block;
+        }
+
+        .close-menu {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 36px;
+            height: 36px;
+            line-height: 36px;
+            text-align: center;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            color: #fff;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        /* 隐藏文件选择 */
+        #avatarUpload, #bgUpload {
+            display: none;
+        }
+
+        /* 名字动态渐变 */
+        @keyframes dynamicGradient {
+            0% {background-position: 0% 50%;}
+            50% {background-position: 100% 50%;}
+            100% {background-position: 0% 50%;}
+        }
+        @keyframes honorFlow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        @keyframes sentenceFlow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* 卡片统一基础过渡 - 简洁堆叠 */
+        .card-item {
+            transition: transform 0.3s ease-out;
+            will-change: transform;
+        }
+
+        .avatar-section {
+            width: 180px;
+            height: 180px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(12px);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            border: 3px solid rgba(255,255,255,0.7);
+        }
+        .avatar:hover {
+            transform: scale(1.15);
+            box-shadow: 0 0 30px #7289da, 0 0 60px #a29bfe;
+        }
+
+        .name-section {
+            padding: 10px 30px;
+            background: rgba0, 0, 0, 0.2;
+            border-radius: 50px;
+        }
+        .name {
+            font-family: 'Poppins', sans-serif;
+            font-size: 36px;
+            font-weight: 800;
+            letter-spacing: 3px;
+            background: linear-gradient(90deg, #5B93FF, #9D7DFF, #7B68EE, #5B93FF);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: dynamicGradient 6s ease infinite;
+        }
+
+        .quote-section {
+            padding: 10px 20px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 12px;
+            width: 90%;
+            text-align: center;
+        }
+        .quote {
+            font-size: 17px;
+            color: #eee;
+            font-style: italic;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+            letter-spacing: 1px;
+            font-family: "ZCOOL KuaiLe", cursive;
+        }
+
+        .edu-section {
+            padding: 15px 20px;
+            background: rgba(91, 147, 255, 0.12);
+            border-radius: 16px;
+            width: 90%;
+        }
+        .edu-text {
+            font-size: 20px;
+            color: #eee;
+            text-shadow: 1px 1px 4px rgba(0,0,0,0.3);
+            text-align: center;
+            line-height: 1.7;
+            font-family: "ZCOOL KuaiLe", cursive;
+        }
+
+        .intro-section {
+            width: 92%;
+            padding: 25px 20px;
+            background: rgba(255,255,255,0.12);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .intro-text {
+            font-size: 20px;
+            color: #eee;
+            text-shadow: 1px 1px 4px rgba(0,0,0,0.3);
+            line-height: 1.8;
+            text-align: center;
+            font-family: "ZCOOL KuaiLe", cursive;
+        }
+
+        .honor-section {
+            width: 92%;
+            padding: 20px 15px;
+            background: rgba(123, 104, 238, 0.1);
+            border-radius: 18px;
+        }
+        .honor-title {
+            font-size: 22px;
+            font-weight: 600;
+            color: #fff;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+            margin-bottom: 12px;
+            text-align: center;
+        }
+        .honor-list {
+            font-size: 18px;
+            line-height: 1.8;
+            text-align: center;
+            font-family: "ZCOOL KuaiLe", cursive;
+            background: linear-gradient(90deg, #ff9500, #ffcc00, #ff6600, #ff9500);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: honorFlow 5s ease infinite;
+        }
+
+        .sentence-section{
+            width:92%;
+            padding:25px 20px;
+            background:rgba(91,147,255,0.12);
+            border-radius:18px;
+            text-align:center;
+        }
+        .sentence-title{
+            font-size:22px;
+            color:#fff;
+            margin-bottom:15px;
+            text-shadow:1px 1px 3px rgba(0,0,0,0.3);
+        }
+        .random-sentence{
+            font-size:20px;
+            min-height:60px;
+            line-height:1.8;
+            font-family: "ZCOOL KuaiLe", cursive;
+            background: linear-gradient(90deg, #e879f9, #c084fc, #f472b6, #e879f9);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: sentenceFlow 6s ease infinite;
+        }
+        .change-btn{
+            margin-top:15px;
+            padding:8px 22px;
+            border:none;
+            background:#7B68EE;
+            color:#fff;
+            border-radius:30px;
+            cursor:pointer;
+            transition:0.3s ease;
+            font-family: "ZCOOL KuaiLe", cursive;
+        }
+        .change-btn:hover{
+            background:#5B93FF;
+            transform:scale(1.05);
+        }
+
+        .visit-stat {
+            width: 92%;
+            padding: 18px 20px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 16px;
+            text-align: center;
+            color: #eee;
+            font-size: 18px;
+            letter-spacing: 2px;
+        }
+
+        .footer {
+            margin-top: 20px;
+            font-size: 16px;
+            color: #bbb;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+
+        @media (min-width: 768px) {
+            header{padding:0 40px;}
+            .logo-text{font-size:28px;}
+            .search-input{width:220px;padding:8px 16px;font-size:15px;}
+            .menu-btn{padding:8px 20px;font-size:15px;}
+            .avatar-section{width:220px;height:220px;}
+            .avatar{width:150px;height:150px;}
+            .name{font-size:52px;}
+            .quote-section,.edu-section{width:auto;padding:10px 30px;}
+            .intro-section{max-width:650px;padding:30px 45px;width:auto;}
+            .honor-section,.sentence-section{max-width:650px;padding:25px 40px;width:auto;}
+            .visit-stat{max-width:650px;width:auto;}
+        }
+    </style>
+</head>
+<body>
+
+<!-- 关于本站自定义弹窗 -->
+<div class="about-mask" id="aboutMask">
+    <div class="about-box">
+        <p style="color:#ccc;font-size:18px;">网站创建者</p>
+        <div class="text-ag">AfterGlow</div>
+        <p style="color:#ccc;font-size:18px;">技术支持</p>
+        <div class="text-br">BR</div>
+        <button class="about-close" onclick="closeAbout()">确定</button>
+    </div>
+</div>
+
+<!-- 全屏管理员锁屏 -->
+<div class="admin-lock-screen" id="adminLock">
+    <div class="lock-box" id="lockBox">
+        <h2 class="lock-title">创建者验证</h2>
+        <input type="password" class="lock-input" id="lockPwd" placeholder="请输入管理员密码" autocomplete="off">
+        <button class="lock-btn" onclick="checkAdminPwd()">解锁</button>
+        <div class="lock-tip">仅限网站创建者使用</div>
+    </div>
+</div>
+
+<!-- 隐藏文件选择：头像 + 背景 -->
+<input type="file" id="avatarUpload" accept="image/*">
+<input type="file" id="bgUpload" accept="image/*">
+
+<!-- 页面加载动画 -->
+<div class="loading-wrap" id="loadingBox">
+    <div class="loading-circle"></div>
+    <div class="loading-text">页面加载中...</div>
+</div>
+
+<!-- 侧边菜单遮罩 -->
+<div class="menu-mask" id="menuMask" onclick="closeSideMenu()"></div>
+<!-- 侧边菜单主体 -->
+<div class="side-menu" id="sideMenu">
+    <div class="close-menu" onclick="closeSideMenu()">✕</div>
+    <!-- 实时时间区域 -->
+    <div class="menu-time">
+        <p id="nowTime">00:00:00</p>
+        <p id="nowDate">2025年01月01日 星期几</p>
+    </div>
+    <!-- 功能列表 -->
+    <div class="menu-func-list">
+        <div class="func-item" onclick="toggleMode()">暗黑/浅色模式切换</div>
+
+        <!-- 管理员专属 -->
+        <div class="func-item admin-only" id="adminAvatarBtn" onclick="changeAvatar()">创建者专属-更换头像</div>
+        <div class="func-item admin-only" id="adminBgBtn" onclick="changeBackground()">创建者专属-修改网站背景</div>
+        <div class="func-item admin-only" onclick="resetBackground()">创建者专属-恢复默认背景</div>
+
+        <div class="func-item" onclick="openAdminLock()">管理员解锁</div>
+        <div class="func-item" onclick="backToTop()">返回页面顶部</div>
+        <div class="func-item" onclick="resetVisitData()">重置访问统计</div>
+        <div class="func-item" onclick="changeBgRandom()">随机更换背景色</div>
+        <div class="func-item" onclick="getNewSentenceFast()">快速切换名言</div>
+        <div class="func-item" onclick="clearLocalData()">清空本地缓存</div>
+        <div class="func-item" onclick="alertAbout()">关于本站</div>
+    </div>
+</div>
+
+<!-- 顶部导航 -->
+<header>
+    <div class="logo-text">AfterGlow</div>
+    <div class="nav-right">
+        <input type="text" class="search-input" placeholder="搜索...">
+        <button class="menu-btn" onclick="openSideMenu()">菜单栏</button>
+    </div>
+</header>
+
+<!-- 头像 -->
+<div class="avatar-section card-item">
+    <img class="avatar" id="userAvatar" src="https://picsum.photos/id/220/300/300" alt="新简约头像">
+</div>
+
+<!-- 名字 -->
+<div class="name-section card-item">
+    <h1 class="name">AfterGlow</h1>
+</div>
+
+<!-- 名人名言 -->
+<div class="quote-section card-item">
+    <p class="quote">业余生活要有意义，不要越轨</p>
+</div>
+
+<!-- 学历爱好 -->
+<div class="edu-section card-item">
+    <p class="edu-text">
+        毕业于 深圳大学<br>
+        热爱生活 · 喜欢游戏 · 专注技术
+    </p>
+</div>
+
+<!-- 自我介绍 -->
+<div class="intro-section card-item">
+    <p class="intro-text">
+        我是AfterGlow，主攻网络空间安全，习惯用独特视角拆解问题并寻找答案。
+    </p>
+</div>
+
+<!-- 赛事荣誉 -->
+<div class="honor-section card-item">
+    <h3 class="honor-title">赛事荣誉</h3>
+    <div class="honor-list">
+        <p>2023年CNBS冠军</p>
+        <p>2024年CNBS亚军</p>
+        <p>2025年CNBS四强</p>
+        <p>2023年RC小组赛八强</p>
+        <p>2023年BBOYS大赛八强</p>
+        <p>2024年BloxStrike赏金赛季军</p>
+        <p>2026年CNHC联赛四强</p>
+        <p>2022年BBOYS七级证书</p>
+        <p>2024年网络安全小组赛CN赛区亚军</p>
+        <p>2025年荒野乱斗国际服全球排行榜第17名</p>
+        <p>Combat Master硬核模式全服第25名</p>
+    </div>
+</div>
+
+<!-- 随机名言 -->
+<div class="sentence-section card-item">
+    <h3 class="sentence-title">随机名言名句</h3>
+    <div id="randomSentence" class="random-sentence"></div>
+    <button class="change-btn" onclick="getRandomSentence()">换一句</button>
+</div>
+
+<!-- 访问量统计 -->
+<div class="visit-stat card-item" id="visitStatBox"></div>
+
+<!-- 底部作者 -->
+<div class="footer">
+    © 网站创建者 · AfterGlow
+</div>
+
+<script>
+// ========== 管理员密码配置 ==========
+const ADMIN_PWD = "123456";
+
+// 锁屏元素
+const adminLock = document.getElementById("adminLock");
+const lockPwd = document.getElementById("lockPwd");
+const lockBox  = document.getElementById("lockBox");
+
+// 关于弹窗
+const aboutMask = document.getElementById("aboutMask");
+function alertAbout(){
+    aboutMask.classList.add("show");
+    closeSideMenu();
+}
+function closeAbout(){
+    aboutMask.classList.remove("show");
+}
+
+// 打开锁屏
+function openAdminLock() {
+    adminLock.classList.add("show");
+    lockPwd.value = "";
+    setTimeout(() => lockPwd.focus(), 300);
+    closeSideMenu();
+}
+// 关闭锁屏
+function closeAdminLock() {
+    adminLock.classList.remove("show");
+}
+
+// 密码验证 + 错误抖动
+function checkAdminPwd() {
+    const val = lockPwd.value.trim();
+    if (val === ADMIN_PWD) {
+        localStorage.setItem("isAdmin", "true");
+        // 显示所有管理员专属按钮
+        document.querySelectorAll(".admin-only").forEach(el=>el.classList.add("show"));
+        closeAdminLock();
+        alert("✅ 管理员已解锁，可修改头像与网站背景");
+    } else {
+        lockBox.classList.add("error-shake");
+        setTimeout(()=>lockBox.classList.remove("error-shake"),400);
+        lockPwd.value = "";
+        lockPwd.focus();
+    }
+}
+
+// 密码框回车提交
+lockPwd.addEventListener('keydown',function(e){
+    if(e.key === 'Enter') checkAdminPwd();
+})
+
+// 初始化管理员状态
+(function initAdminState() {
+    let isAdmin = localStorage.getItem("isAdmin") === "true";
+    if (isAdmin) {
+        document.querySelectorAll(".admin-only").forEach(el=>el.classList.add("show"));
+    }
+})();
+
+// ========== 初始化本地自定义背景 ==========
+(function initBackground(){
+    const bgImg = localStorage.getItem("siteBgImage");
+    if(bgImg){
+        document.body.style.setProperty('--bg-img',`url(${bgImg})`);
+    }
+})();
+
+// 创建者：更换网站背景
+const bgUpload = document.getElementById('bgUpload');
+bgUpload.onchange = function(e){
+    let file = e.target.files[0];
+    if(!file) return;
+    let reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = function(){
+        let url = reader.result;
+        document.body.style.setProperty('--bg-img',`url(${url})`);
+        localStorage.setItem("siteBgImage", url);
+        alert("✅ 网站背景修改成功，已本地保存！");
+    }
+}
+function changeBackground(){
+    bgUpload.click();
+    closeSideMenu();
+}
+
+// 创建者：恢复默认背景
+function resetBackground(){
+    localStorage.removeItem("siteBgImage");
+    document.body.style.setProperty('--bg-img','none');
+    alert("✅ 已恢复网站默认背景");
+    closeSideMenu();
+}
+
+// 1. 明暗模式
+(function initMode() {
+    let mode = localStorage.getItem('siteMode');
+    if (mode === 'light') {
+        document.body.classList.add('light-mode');
+    }
+})();
+function toggleMode() {
+    const body = document.body;
+    body.classList.toggle('light-mode');
+    localStorage.setItem('siteMode', body.classList.contains('light-mode') ? 'light' : 'dark');
+    closeSideMenu();
+}
+
+// 更换头像
+const avatarUpload = document.getElementById('avatarUpload');
+const userAvatar = document.getElementById('userAvatar');
+avatarUpload.onchange = function (e) {
+    let file = e.target.files[0];
+    if (!file) return;
+    let reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = function () {
+        userAvatar.src = reader.result;
+        localStorage.setItem('avatarImg', reader.result);
+    }
+}
+function changeAvatar() {
+    avatarUpload.click();
+    closeSideMenu();
+}
+if (localStorage.getItem('avatarImg')) {
+    userAvatar.src = localStorage.getItem('avatarImg');
+}
+
+// 页面加载动画
+window.onload = function () {
+    setTimeout(() => {
+        document.getElementById('loadingBox').classList.add('hide');
+    }, 800);
+}
+
+// 随机名言
+const sentences = [
+    "道阻且长，行则将至。","心有山海，静而不争。","慢慢来，谁不是摸着石头过河。",
+    "凡是过往，皆为序章。","追风赶月莫停留，平芜尽处是春山。","生活原本沉闷，但跑起来就有风。",
+    "乾坤未定，你我皆是黑马。","夜色难免黑凉，前行必有曙光。","保持热爱，奔赴山海。",
+    "半山腰总是最挤的，你得去山顶看看。","前路漫漫亦灿灿，往事堪堪亦澜澜。",
+    "心怀赤诚，奔赴属于自己的星辰大海。","生活最好的状态，是清醒自律且自知。",
+    "各自努力，顶峰相见。","万物皆有裂痕，那是光照进来的地方。","你若盛开，清风自来。",
+    "且听风吟，静待花开。","人生海海，山山而川。","追风的人，终会被月光照亮。",
+    "纵使前路荆棘丛生，也要不负心中远方。","不必借光而行，你我亦是星辰。",
+    "生活温柔且浪漫，未来可期又可盼。","时光不负有心人，星光不负赶路人。",
+    "与其仰望星空，不如去摘星星。","心若向阳，何惧悲伤。"
+];
+function getRandomSentence() {
+    let idx = Math.floor(Math.random() * sentences.length);
+    document.getElementById("randomSentence").innerText = sentences[idx];
+}
+getRandomSentence();
+function getNewSentenceFast() { getRandomSentence(); }
+
+// 访问统计
+(function countVisit() {
+    let totalVisit = localStorage.getItem('totalVisit') || 0;
+    localStorage.setItem('totalVisit', ++totalVisit);
+    let guestId = sessionStorage.getItem('guestUniqueId');
+    if (!guestId) {
+        sessionStorage.setItem('guestUniqueId', 'user_' + Date.now() + Math.random());
+        localStorage.setItem('guestCount', (Number(localStorage.getItem('guestCount'))||0)+1);
+    }
+    renderVisitData();
+})();
+function renderVisitData() {
+    let totalVisit = localStorage.getItem('totalVisit') || 0;
+    let gk = localStorage.getItem('guestCount') || 0;
+    document.getElementById('visitStatBox').innerHTML = `
+        👁️ 页面总访问量：${totalVisit} 次 &nbsp;&nbsp; 🧑‍🤝‍🧑 累计访客：${gk} 人
+    `;
+}
+function resetVisitData() {
+    localStorage.removeItem('totalVisit');
+    localStorage.removeItem('guestCount');
+    sessionStorage.removeItem('guestUniqueId');
+    renderVisitData();
+    alert("✅ 访问统计已重置完成！");
+    closeSideMenu();
+}
+
+// 卡片滚动视差
+const cardList = document.querySelectorAll('.card-item');
+window.addEventListener('scroll', () => {
+    let scrollY = window.scrollY;
+    cardList.forEach((card, index) => {
+        card.style.transform = `translateY(${scrollY * (index + 1) * 0.02}px)`;
+    });
+})
+
+// 侧边菜单
+const sideMenu = document.getElementById('sideMenu');
+const menuMask = document.getElementById('menuMask');
+function openSideMenu() {
+    sideMenu.classList.add('show');
+    menuMask.classList.add('show');
+}
+function closeSideMenu() {
+    sideMenu.classList.remove('show');
+    menuMask.classList.remove('show');
+}
+
+// 实时时间
+function updateTime() {
+    const now = new Date();
+    let h = now.getHours().toString().padStart(2, '0');
+    let m = now.getMinutes().toString().padStart(2, '0');
+    let s = now.getSeconds().toString().padStart(2, '0');
+    let y = now.getFullYear();
+    let mo = (now.getMonth() + 1).toString().padStart(2, '0');
+    let d = now.getDate().toString().padStart(2, '0');
+    let weekArr = ["星期日","星期一","星期二","星期三","星期四","星期五","星期六"];
+    document.getElementById("nowTime").innerText = `${h}:${m}:${s}`;
+    document.getElementById("nowDate").innerText = `${y}年${mo}月${d}日 ${weekArr[now.getDay()]}`;
+}
+setInterval(updateTime,1000);updateTime();
+
+// 回到顶部
+function backToTop(){
+    window.scrollTo({top:0,behavior:'smooth'});
+    closeSideMenu();
+}
+
+// 随机背景色
+function changeBgRandom() {
+    let r = Math.floor(Math.random() * 60);
+    let g = Math.floor(Math.random() * 60);
+    let b = Math.floor(Math.random() * 80);
+    document.body.style.backgroundColor = `rgb(${r},${g},${b})`;
+    closeSideMenu();
+}
+
+// 清空缓存
+function clearLocalData() {
+    localStorage.clear();
+    sessionStorage.clear();
+    alert("✅ 本地缓存已清空，页面即将刷新");
+    location.reload();
+}
+</script>
+
+</body>
+</html>
