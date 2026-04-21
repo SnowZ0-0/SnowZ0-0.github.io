@@ -1,0 +1,1209 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width; initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AfterGlow | 个人自我介绍</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            background-color: #333538;
+            background-image: var(--bg-img, none);
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            font-family: "ZCOOL KuaiLe", cursive;
+            padding-top: 80px;
+            padding-bottom: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 24px;
+            overflow-x: hidden;
+            transition: background-color 0.4s ease;
+        }
+
+        body.light-mode {
+            background-color: #f5f6f8;
+        }
+        body.light-mode .avatar-section,
+        body.light-mode .name-section,
+        body.light-mode .quote-section,
+        body.light-mode .edu-section,
+        body.light-mode .intro-section,
+        body.light-mode .honor-section,
+        body.light-mode .sentence-section,
+        body.light-mode .visit-stat {
+            background: rgba(0,0,0,0.06);
+        }
+        body.light-mode .edu-text,
+        body.light-mode .intro-text,
+        body.light-mode .quote,
+        body.light-mode .honor-title,
+        body.light-mode .sentence-title,
+        body.light-mode .visit-stat {
+            color: #222;
+        }
+        body.light-mode footer {
+            color: #555;
+        }
+
+        /* ========== 星星悬浮按钮 手机自适应 ========== */
+        .star-music-btn {
+            position: fixed;
+            right: 18px;
+            bottom: 18px;
+            width: 46px;
+            height: 46px;
+            background: rgba(123,104,238,0.85);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: #fff;
+            box-shadow: 0 0 15px rgba(123,104,238,0.6);
+            cursor: pointer;
+            z-index: 999;
+            transition: transform 0.3s ease;
+        }
+        .star-music-btn:hover {
+            transform: scale(1.15) rotate(15deg);
+        }
+
+        /* ========== 透明长椭圆播放器面板 手机适配 ========== */
+        .music-panel {
+            position: fixed;
+            right: 70px;
+            bottom: 20px;
+            width: calc(100% - 90px);
+            max-width: 340px;
+            padding: 14px 16px;
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(12px);
+            border-radius: 999px;
+            border: 1px solid rgba(255,255,255,0.2);
+            z-index: 998;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s ease;
+        }
+        .music-panel.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .music-name {
+            color: #fff;
+            font-size: 12px;
+            text-align: center;
+            margin-bottom: 8px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .music-progress {
+            width: 100%;
+            height: 4px;
+            background: rgba(255,255,255,0.25);
+            border-radius: 5px;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+        .music-progress-bar {
+            height: 100%;
+            background: #7B68EE;
+            border-radius: 5px;
+            width: 0%;
+        }
+        .music-control {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap:4px;
+        }
+        .music-btn {
+            background: transparent;
+            border: none;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .music-volume {
+            width: 50px;
+        }
+        .admin-load-music {
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 6px;
+            background: rgba(123,104,238,0.4);
+        }
+        #musicFile {display: none;}
+
+        /* 管理员专属默认隐藏 */
+        .admin-only {display: none;}
+        .admin-only.show {display: inline-block;}
+
+        /* ========== 关于本站弹窗 ========== */
+        .about-mask{
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(6px);
+            z-index: 999999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: 0.3s;
+        }
+        .about-mask.show{
+            opacity: 1;
+            visibility: visible;
+        }
+        .about-box{
+            background: #222;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 40px 30px;
+            text-align: center;
+            width:90%;
+        }
+        .about-desc{
+            color: #ccc;
+            font-size: 17px;
+            margin: 8px 0;
+        }
+        .text-ag{
+            font-size: 24px;
+            font-weight: bold;
+            margin:12px 0;
+            background: linear-gradient(90deg,#5B93FF,#7B68EE,#9D7DFF,#5B93FF);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: flowBluePurple 3s linear infinite;
+        }
+        .text-br{
+            font-size: 24px;
+            font-weight: bold;
+            margin:12px 0 20px;
+            background: linear-gradient(90deg,#ff7eb9,#ff65a3,#ff96c8,#ff7eb9);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: flowPink 3s linear infinite;
+        }
+        @keyframes flowBluePurple{
+            0%{background-position:0% 50%;}
+            50%{background-position:100% 50%;}
+            100%{background-position:0% 50%;}
+        }
+        @keyframes flowPink{
+            0%{background-position:0% 50%;}
+            50%{background-position:100% 50%;}
+            100%{background-position:0% 50%;}
+        }
+        .about-close{
+            padding: 9px 26px;
+            background: #7B68EE;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        /* ========== 管理员全屏锁屏 ========== */
+        .admin-lock-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(12px);
+            z-index: 99999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s ease;
+        }
+        .admin-lock-screen.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        .lock-box {
+            width: 90%;
+            max-width: 380px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 20px;
+            padding: 40px 30px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.15);
+        }
+        .lock-title {
+            font-size: 24px;
+            color: #fff;
+            margin-bottom: 30px;
+            letter-spacing: 1px;
+        }
+        .lock-input {
+            width: 100%;
+            padding: 14px 18px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 16px;
+            outline: none;
+            text-align: center;
+            margin-bottom: 20px;
+            font-family: "ZCOOL KuaiLe", cursive;
+        }
+        .lock-input:focus {
+            border-color: #7B68EE;
+            box-shadow: 0 0 8px rgba(123,104,238,0.4);
+        }
+        .lock-btn {
+            width: 100%;
+            padding: 14px;
+            background: #7B68EE;
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: "ZCOOL KuaiLe", cursive;
+        }
+        .lock-btn:hover {
+            background: #5B93FF;
+            transform: scale(1.03);
+        }
+        .lock-tip {
+            margin-top: 15px;
+            color: #aaa;
+            font-size: 14px;
+        }
+
+        /* ========== 页面加载动画 ========== */
+        .loading-wrap {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #333538;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.6s ease, visibility 0.6s ease;
+        }
+        .loading-wrap.hide {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+        .loading-circle {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(123,104,238,0.2);
+            border-top-color: #7B68EE;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+        @keyframes spin {
+            to{transform: rotate(360deg);}
+        }
+        .loading-text {
+            font-size: 20px;
+            background: linear-gradient(90deg,#5B93FF,#9D7DFF);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: dynamicGradient 2s ease infinite;
+        }
+
+        /* 顶部导航 */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 75px;
+            background: rgba(255,255,255,0.85);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 15px;
+            z-index: 999;
+        }
+
+        .logo-text {
+            font-family: 'Poppins', sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            background: linear-gradient(90deg, #5B93FF, #9D7DFF);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .search-input {
+            padding: 5px 10px;
+            border: 1px solid #ccc;
+            border-radius: 30px;
+            outline: none;
+            width: 100px;
+            font-family: "ZCOOL KuaiLe", cursive;
+            font-size: 13px;
+        }
+        .search-input:focus {
+            border-color: #7B68EE;
+            box-shadow: 0 0 6px rgba(123,104,238,0.3);
+        }
+
+        .menu-btn {
+            padding: 5px 10px;
+            background: #7B68EE;
+            color: #fff;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 13px;
+            font-family: "ZCOOL KuaiLe", cursive;
+        }
+
+        /* 侧边弹出菜单 */
+        .menu-mask {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.4);
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: 0.3s ease;
+        }
+        .menu-mask.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .side-menu {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 260px;
+            height: 100%;
+            background: #2c2e31;
+            backdrop-filter: blur(15px);
+            padding: 30px 15px;
+            z-index: 1001;
+            transform: translateX(100%);
+            transition: transform 0.4s ease;
+        }
+        .side-menu.show {
+            transform: translateX(0);
+        }
+
+        .menu-time {
+            text-align: center;
+            padding: 15px 0;
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.15);
+        }
+        .menu-time p:nth-child(1) {
+            font-size: 24px;
+            color: #fff;
+            margin-bottom: 6px;
+        }
+        .menu-time p:nth-child(2) {
+            font-size: 14px;
+            color: #aaa;
+        }
+
+        .menu-func-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .func-item {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 12px;
+            color: #eee;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.3s ease;
+            font-size:14px;
+        }
+        .func-item:hover {
+            background: #7B68EE;
+            transform: translateX(-6px);
+        }
+
+        .close-menu {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            width: 32px;
+            height: 32px;
+            line-height: 32px;
+            text-align: center;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            color: #fff;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        #avatarUpload,#bgImgUpload{display:none;}
+
+        @keyframes dynamicGradient {
+            0% {background-position: 0% 50%;}
+            50% {background-position: 100% 50%;}
+            100% {background-position: 0% 50%;}
+        }
+        @keyframes honorFlow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        @keyframes sentenceFlow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .card-item {
+            transition: transform 0.3s ease-out;
+            will-change: transform;
+        }
+
+        .avatar-section {
+            width: 150px;
+            height: 150px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(12px);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            border: 3px solid rgba(255,255,255,0.7);
+        }
+        .avatar:hover {
+            transform: scale(1.15);
+            box-shadow: 0 0 30px #7289da, 0 0 60px #a29bfe;
+        }
+
+        .name-section {
+            padding: 8px 20px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 50px;
+        }
+        .name {
+            font-family: 'Poppins', sans-serif;
+            font-size: 28px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            background: linear-gradient(90deg, #5B93FF, #9D7DFF, #7B68EE, #5B93FF);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: dynamicGradient 6s ease infinite;
+        }
+
+        .quote-section {
+            padding: 10px 16px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 12px;
+            width: 92%;
+            text-align: center;
+        }
+        .quote {
+            font-size: 15px;
+            color: #eee;
+            font-style: italic;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+            letter-spacing: 1px;
+            font-family: "ZCOOL KuaiLe", cursive;
+        }
+
+        .edu-section {
+            padding: 15px 16px;
+            background: rgba(91, 147, 255, 0.12);
+            border-radius: 16px;
+            width: 92%;
+        }
+        .edu-text {
+            font-size: 17px;
+            color: #eee;
+            text-shadow: 1px 1px 4px rgba(0,0,0,0.3);
+            text-align: center;
+            line-height: 1.7;
+            font-family: "ZCOOL KuaiLe", cursive;
+        }
+
+        .intro-section {
+            width: 92%;
+            padding: 20px 16px;
+            background: rgba(255,255,255,0.12);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .intro-text {
+            font-size: 17px;
+            color: #eee;
+            text-shadow: 1px 1px 4px rgba(0,0,0,0.3);
+            line-height: 1.8;
+            text-align: center;
+            font-family: "ZCOOL KuaiLe", cursive;
+        }
+
+        .honor-section {
+            width: 92%;
+            padding: 16px 12px;
+            background: rgba(123, 104, 238, 0.1);
+            border-radius: 18px;
+        }
+        .honor-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #fff;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        .honor-list {
+            font-size: 15px;
+            line-height: 1.7;
+            text-align: center;
+            font-family: "ZCOOL KuaiLe", cursive;
+            background: linear-gradient(90deg, #ff9500, #ffcc00, #ff6600, #ff9500);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: honorFlow 5s ease infinite;
+        }
+
+        .sentence-section{
+            width:92%;
+            padding:20px 16px;
+            background:rgba(91,147,255,0.12);
+            border-radius:18px;
+            text-align:center;
+        }
+        .sentence-title{
+            font-size:20px;
+            color:#fff;
+            margin-bottom:12px;
+            text-shadow:1px 1px 3px rgba(0,0,0,0.3);
+        }
+        .random-sentence{
+            font-size:17px;
+            min-height:60px;
+            line-height:1.8;
+            font-family: "ZCOOL KuaiLe", cursive;
+            background: linear-gradient(90deg, #e879f9, #c084fc, #f472b6, #e879f9);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: sentenceFlow 6s ease infinite;
+        }
+        .change-btn{
+            margin-top:12px;
+            padding:7px 18px;
+            border:none;
+            background:#7B68EE;
+            color:#fff;
+            border-radius:30px;
+            cursor:pointer;
+            transition:0.3s ease;
+            font-family: "ZCOOL KuaiLe", cursive;
+            font-size:14px;
+        }
+        .change-btn:hover{
+            background:#5B93FF;
+            transform:scale(1.05);
+        }
+
+        .visit-stat {
+            width: 92%;
+            padding: 16px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 16px;
+            text-align: center;
+            color: #eee;
+            font-size: 15px;
+            letter-spacing: 1px;
+        }
+
+        .footer {
+            margin-top: 16px;
+            font-size: 14px;
+            color: #bbb;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+
+        @media (min-width: 768px) {
+            header{padding:0 40px;}
+            .logo-text{font-size:28px;}
+            .search-input{width:220px;padding:8px 16px;font-size:15px;}
+            .menu-btn{padding:8px 20px;font-size:15px;}
+            .avatar-section{width:220px;height:220px;}
+            .avatar{width:150px;height:150px;}
+            .name{font-size:52px;}
+            .quote-section,.edu-section{width:auto;padding:10px 30px;}
+            .intro-section{max-width:650px;padding:30px 45px;width:auto;}
+            .honor-section,.sentence-section{max-width:650px;padding:25px 40px;width:auto;}
+            .visit-stat{max-width:650px;width:auto;}
+
+            .star-music-btn{
+                right:25px;
+                bottom:25px;
+                width:50px;
+                height:50px;
+                font-size:26px;
+            }
+            .music-panel{
+                right:85px;
+                bottom:28px;
+                width:380px;
+                padding:16px 24px;
+            }
+            .music-btn{font-size:18px;}
+            .music-volume{width:60px;}
+            .music-name{font-size:14px;}
+        }
+    </style>
+</head>
+<body>
+
+<!-- 星星悬浮按钮 -->
+<div class="star-music-btn" id="starBtn">★</div>
+
+<!-- 透明长椭圆音乐播放器 -->
+<div class="music-panel" id="musicPanel">
+    <div class="music-name" id="musicName">暂无音乐</div>
+    <div class="music-progress" id="progressWrap">
+        <div class="music-progress-bar" id="progressBar"></div>
+    </div>
+    <div class="music-control">
+        <button class="music-btn" id="prevMusic">⏮</button>
+        <button class="music-btn" id="playMusic">▶</button>
+        <button class="music-btn" id="nextMusic">⏭</button>
+        <input type="range" class="music-volume" id="volumeCtrl" min="0" max="1" step="0.1" value="0.7">
+        <button class="music-btn" id="loopMusic">🔁</button>
+        <button class="music-btn admin-load-music admin-only" id="adminLoadBtn">上传</button>
+    </div>
+    <audio id="audioPlayer">
+    <input type="file" id="musicFile" accept="audio/*">
+</div>
+
+<!-- 关于本站弹窗 -->
+<div class="about-mask" id="aboutMask">
+    <div class="about-box">
+        <p class="about-desc">网站创建者</p>
+        <div class="text-ag">AfterGlow</div>
+        <p class="about-desc">技术支持</p>
+        <div class="text-br">BR</div>
+        <button class="about-close" onclick="closeAbout()">确定</button>
+    </div>
+</div>
+
+<!-- 全屏管理员锁屏 -->
+<div class="admin-lock-screen" id="adminLock">
+    <div class="lock-box">
+        <h2 class="lock-title">创建者验证</h2>
+        <input type="password" class="lock-input" id="lockPwd" placeholder="请输入管理员密码" autocomplete="off">
+        <button class="lock-btn" onclick="checkAdminPwd()">解锁</button>
+        <div class="lock-tip">仅限网站创建者使用</div>
+    </div>
+</div>
+
+<input type="file" id="avatarUpload" accept="image/*">
+<input type="file" id="bgImgUpload" accept="image/*">
+
+<div class="loading-wrap" id="loadingBox">
+    <div class="loading-circle"></div>
+    <div class="loading-text">页面加载中...</div>
+</div>
+
+<div class="menu-mask" id="menuMask" onclick="closeSideMenu()"></div>
+<div class="side-menu" id="sideMenu">
+    <div class="close-menu" onclick="closeSideMenu()">✕</div>
+    <div class="menu-time">
+        <p id="nowTime">00:00:00</p>
+        <p id="nowDate">2025年01月01日 星期几</p>
+    </div>
+    <div class="menu-func-list">
+        <div class="func-item" onclick="toggleMode()">暗黑/浅色模式切换</div>
+        <div class="func-item admin-only" onclick="changeAvatar()">创建者专属-更换头像</div>
+        <div class="func-item admin-only" onclick="changeBgImage()">创建者专属-更换背景图</div>
+        <div class="func-item admin-only" onclick="resetBgImage()">创建者专属-恢复默认背景</div>
+        <div class="func-item admin-only" onclick="clearMusic()">创建者专属-清空背景音乐</div>
+        <div class="func-item" onclick="openAdminLock()">管理员解锁</div>
+        <div class="func-item" onclick="backToTop()">返回页面顶部</div>
+        <div class="func-item" onclick="resetVisitData()">重置访问统计</div>
+        <div class="func-item" onclick="changeBgRandom()">随机更换背景色</div>
+        <div class="func-item" onclick="getNewSentenceFast()">快速切换名言</div>
+        <div class="func-item" onclick="clearLocalData()">清空本地缓存</div>
+        <div class="func-item" onclick="alertAbout()">关于本站</div>
+    </div>
+</div>
+
+<header>
+    <div class="logo-text">AfterGlow</div>
+    <div class="nav-right">
+        <input type="text" class="search-input" placeholder="搜索...">
+        <button class="menu-btn" onclick="openSideMenu()">菜单栏</button>
+    </div>
+</header>
+
+<div class="avatar-section card-item">
+    <img class="avatar" id="userAvatar" src="https://picsum.photos/id/220/300/300" alt="头像">
+</div>
+
+<div class="name-section card-item">
+    <h1 class="name">AfterGlow</h1>
+</div>
+
+<div class="quote-section card-item">
+    <p class="quote">业余生活要有意义，不要越轨</p>
+</div>
+
+<div class="edu-section card-item">
+    <p class="edu-text">
+        毕业于 深圳大学<br>
+        热爱生活 · 喜欢游戏 · 专注技术
+    </p>
+</div>
+
+<div class="intro-section card-item">
+    <p class="intro-text">
+        我是AfterGlow，主攻网络空间安全，习惯用独特视角拆解问题并寻找答案。
+    </p>
+</div>
+
+<div class="honor-section card-item">
+    <h3 class="honor-title">赛事荣誉</h3>
+    <div class="honor-list">
+        <p>2023年CNBS冠军</p>
+        <p>2024年CNBS亚军</p>
+        <p>2025年CNBS四强</p>
+        <p>2023年RC小组赛八强</p>
+        <p>2023年BBOYS大赛八强</p>
+        <p>2024年BloxStrike赏金赛季军</p>
+        <p>2026年CNHC联赛四强</p>
+        <p>2022年BBOYS七级证书</p>
+        <p>2024年网络安全小组赛CN赛区亚军</p>
+        <p>2025年荒野乱斗国际服全球排行榜第17名</p>
+        <p>Combat Master硬核模式全服第25名</p>
+    </div>
+</div>
+
+<div class="sentence-section card-item">
+    <h3 class="sentence-title">随机名言名句</h3>
+    <div id="randomSentence" class="random-sentence"></div>
+    <button class="change-btn" onclick="getRandomSentence()">换一句</button>
+</div>
+
+<div class="visit-stat card-item" id="visitStatBox"></div>
+
+<div class="footer">
+    © 网站创建者 · AfterGlow
+</div>
+
+<script>
+// ========== 管理员密码已改为 121127 ==========
+const ADMIN_PWD = "121127";
+
+// 音乐面板切换
+const starBtn = document.getElementById('starBtn');
+const musicPanel = document.getElementById('musicPanel');
+starBtn.onclick = function(){
+    musicPanel.classList.toggle('show');
+};
+
+// 音乐元素
+const audioPlayer = document.getElementById('audioPlayer');
+const playBtn = document.getElementById('playMusic');
+const progressBar = document.getElementById('progressBar');
+const progressWrap = document.getElementById('progressWrap');
+const volumeCtrl = document.getElementById('volumeCtrl');
+const loopBtn = document.getElementById('loopMusic');
+const musicNameDom = document.getElementById('musicName');
+const musicFileInput = document.getElementById('musicFile');
+const adminLoadBtn = document.getElementById('adminLoadBtn');
+
+let isPlay = false;
+let isLoop = false;
+
+// 读取缓存音乐
+(function initLocalMusic(){
+    let musicSrc = localStorage.getItem('localMusicSrc');
+    let name = localStorage.getItem('musicName');
+    if(musicSrc){
+        audioPlayer.src = musicSrc;
+        musicNameDom.innerText = name || "本地背景音乐";
+    }
+})();
+
+// 管理员上传音乐
+adminLoadBtn.onclick = function(){
+    musicFileInput.click();
+}
+musicFileInput.onchange = function(e){
+    let file = e.target.files[0];
+    if(!file)return;
+    let name = file.name;
+    let reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = function(){
+        let url = reader.result;
+        audioPlayer.src = url;
+        localStorage.setItem('localMusicSrc', url);
+        localStorage.setItem('musicName', name);
+        musicNameDom.innerText = name;
+        audioPlayer.play();
+        isPlay = true;
+        playBtn.innerText = "⏸";
+    }
+}
+
+// 清空音乐
+function clearMusic(){
+    audioPlayer.pause();
+    audioPlayer.src = "";
+    localStorage.removeItem('localMusicSrc');
+    localStorage.removeItem('musicName');
+    musicNameDom.innerText = "暂无音乐";
+    alert("✅ 背景音乐已清空");
+    closeSideMenu();
+}
+
+// 播放暂停
+playBtn.onclick = function(){
+    if(!audioPlayer.src) return alert("请管理员先上传音乐！");
+    if(isPlay){
+        audioPlayer.pause();
+        playBtn.innerText = "▶";
+    }else{
+        audioPlayer.play();
+        playBtn.innerText = "⏸";
+    }
+    isPlay = !isPlay;
+}
+
+// 进度条
+audioPlayer.ontimeupdate = function(){
+    let percent = (audioPlayer.currentTime / audioPlayer.duration) * 100;
+    progressBar.style.width = percent + "%";
+}
+progressWrap.onclick = function(e){
+    if(!audioPlayer.duration)return;
+    let offsetX = e.offsetX;
+    let width = progressWrap.clientWidth;
+    audioPlayer.currentTime = (offsetX / width) * audioPlayer.duration;
+}
+
+// 音量
+volumeCtrl.oninput = function(){
+    audioPlayer.volume = this.value;
+}
+
+// 单曲循环
+loopBtn.onclick = function(){
+    isLoop = !isLoop;
+    audioPlayer.loop = isLoop;
+    loopBtn.style.opacity = isLoop ? "1" : "0.5";
+}
+
+// 上下切歌
+document.getElementById('prevMusic').onclick = function(){
+    audioPlayer.currentTime = 0;
+    audioPlayer.play();
+}
+document.getElementById('nextMusic').onclick = function(){
+    audioPlayer.currentTime = 0;
+    audioPlayer.play();
+}
+
+// 管理员验证
+const adminLock = document.getElementById("adminLock");
+const lockPwd = document.getElementById("lockPwd");
+const aboutMask = document.getElementById('aboutMask');
+
+function alertAbout(){aboutMask.classList.add('show');closeSideMenu();}
+function closeAbout(){aboutMask.classList.remove('show');}
+function openAdminLock() {
+    adminLock.classList.add("show");
+    lockPwd.value = "";
+    setTimeout(() => lockPwd.focus(), 300);
+    closeSideMenu();
+}
+function closeAdminLock() {adminLock.classList.remove("show");}
+
+function checkAdminPwd() {
+    const val = lockPwd.value.trim();
+    if (val === ADMIN_PWD) {
+        localStorage.setItem("isAdmin", "true");
+        document.querySelectorAll(".admin-only").forEach(el=>{
+            el.classList.add("show");
+        });
+        closeAdminLock();
+        alert("✅ 管理员已解锁，可使用全部创建者功能");
+    } else {
+        alert("❌ 密码错误");
+        lockPwd.value = "";
+        lockPwd.focus();
+    }
+}
+
+// 初始化管理员状态
+(function initAdminState() {
+    let isAdmin = localStorage.getItem("isAdmin") === "true";
+    if (isAdmin) {
+        document.querySelectorAll(".admin-only").forEach(el=>{
+            el.classList.add("show");
+        });
+    }
+})();
+
+// 背景图
+const bgImgUpload = document.getElementById('bgImgUpload');
+(function initBgImage(){
+    let bg = localStorage.getItem('bgImage');
+    if(bg){
+        document.body.style.setProperty('--bg-img','url('+bg+')');
+    }
+})();
+function changeBgImage(){bgImgUpload.click();closeSideMenu();}
+bgImgUpload.onchange = function(e){
+    let file = e.target.files[0];
+    if(!file)return;
+    let reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = function(){
+        let imgUrl = reader.result;
+        document.body.style.setProperty('--bg-img','url('+imgUrl+')');
+        localStorage.setItem('bgImage',imgUrl);
+    }
+}
+function resetBgImage(){
+    document.body.style.setProperty('--bg-img','none');
+    localStorage.removeItem('bgImage');
+    alert("✅ 已恢复默认背景");
+    closeSideMenu();
+}
+
+// 主题模式
+(function initMode() {
+    let mode = localStorage.getItem('siteMode');
+    if (mode === 'light') {
+        document.body.classList.add('light-mode');
+    }
+})();
+function toggleMode() {
+    const body = document.body;
+    if (body.classList.contains('light-mode')) {
+        body.classList.remove('light-mode');
+        localStorage.setItem('siteMode', 'dark');
+    } else {
+        body.classList.add('light-mode');
+        localStorage.setItem('siteMode', 'light');
+    }
+    closeSideMenu();
+}
+
+// 更换头像
+const avatarUpload = document.getElementById('avatarUpload');
+const userAvatar = document.getElementById('userAvatar');
+avatarUpload.onchange = function (e) {
+    let file = e.target.files[0];
+    if (!file) return;
+    let reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = function () {
+        userAvatar.src = reader.result;
+        localStorage.setItem('avatarImg', reader.result);
+    }
+}
+function changeAvatar() {avatarUpload.click();closeSideMenu();}
+if (localStorage.getItem('avatarImg')) {
+    userAvatar.src = localStorage.getItem('avatarImg');
+}
+
+// 加载动画
+window.onload = function () {
+    setTimeout(() => {
+        document.getElementById('loadingBox').classList.add('hide');
+    }, 800);
+};
+
+// 随机名言
+const sentences = [
+    "道阻且长，行则将至。","心有山海，静而不争。","慢慢来，谁不是摸着石头过河。",
+    "凡是过往，皆为序章。","追风赶月莫停留，平芜尽处是春山。","生活原本沉闷，但跑起来就有风。",
+    "乾坤未定，你我皆是黑马。","夜色难免黑凉，前行必有曙光。","保持热爱，奔赴山海。",
+    "半山腰总是最挤的，你得去山顶看看。","前路漫漫亦灿灿，往事堪堪亦澜澜。",
+    "心怀赤诚，奔赴属于自己的星辰大海。","生活最好的状态，是清醒自律且自知。",
+    "各自努力，顶峰相见。","万物皆有裂痕，那是光照进来的地方。","你若盛开，清风自来。",
+    "且听风吟，静待花开。","人生海海，山山而川。","追风的人，终会被月光照亮。",
+    "纵使前路荆棘丛生，也要不负心中远方。","不必借光而行，你我亦是星辰。",
+    "生活温柔且浪漫，未来可期又可盼。","时光不负有心人，星光不负赶路人。",
+    "与其仰望星空，不如去摘星星。","心若向阳，何惧悲伤。"
+];
+function getRandomSentence() {
+    let idx = Math.floor(Math.random() * sentences.length);
+    document.getElementById("randomSentence").innerText = sentences[idx];
+}
+getRandomSentence();
+function getNewSentenceFast() {getRandomSentence();}
+
+// 访问统计
+(function countVisit() {
+    let totalVisit = localStorage.getItem('totalVisit') || 0;
+    totalVisit++;
+    localStorage.setItem('totalVisit', totalVisit);
+    let guestId = sessionStorage.getItem('guestUniqueId');
+    if (!guestId) {
+        sessionStorage.setItem('guestUniqueId', 'user_' + Date.now() + Math.random());
+        let guestNum = localStorage.getItem('guestCount') || 0;
+        guestNum++;
+        localStorage.setItem('guestCount', guestNum);
+    }
+    renderVisitData();
+})();
+function renderVisitData() {
+    let totalVisit = localStorage.getItem('totalVisit') || 0;
+    let gk = localStorage.getItem('guestCount') || 0;
+    document.getElementById('visitStatBox').innerHTML = `
+        👁️ 页面总访问量：${totalVisit} 次 &nbsp;&nbsp; 🧑‍🤝‍🧑 累计访客：${gk} 人
+    `;
+}
+function resetVisitData() {
+    localStorage.removeItem('totalVisit');
+    localStorage.removeItem('guestCount');
+    sessionStorage.removeItem('guestUniqueId');
+    renderVisitData();
+    alert("✅ 访问统计已重置完成！");
+    closeSideMenu();
+}
+
+// 卡片滚动视差
+const cardList = document.querySelectorAll('.card-item');
+window.addEventListener('scroll', () => {
+    let scrollY = window.scrollY;
+    cardList.forEach((card, index) => {
+        let speed = (index + 1) * 0.02;
+        card.style.transform = `translateY(${scrollY * speed}px)`;
+    });
+});
+
+// 侧边菜单
+const sideMenu = document.getElementById('sideMenu');
+const menuMask = document.getElementById('menuMask');
+function openSideMenu() {
+    sideMenu.classList.add('show');
+    menuMask.classList.add('show');
+}
+function closeSideMenu() {
+    sideMenu.classList.remove('show');
+    menuMask.classList.remove('show');
+}
+
+// 实时时间
+function updateTime() {
+    const now = new Date();
+    let h = now.getHours().toString().padStart(2, '0');
+    let m = now.getMinutes().toString().padStart(2, '0');
+    let s = now.getSeconds().toString().padStart(2, '0');
+    let y = now.getFullYear();
+    let mo = (now.getMonth() + 1).toString().padStart(2, '0');
+    let d = now.getDate().toString().padStart(2, '0');
+    let weekArr = ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"];
+    let week = weekArr[now.getDay()];
+    document.getElementById("nowTime").innerText = `${h}:${m}:${s}`;
+    document.getElementById("nowDate").innerText = `${y}年${mo}月${d}日 ${week}`;
+}
+setInterval(updateTime, 1000);
+updateTime();
+
+// 回到顶部
+function backToTop() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    closeSideMenu();
+}
+
+// 随机背景色
+function changeBgRandom() {
+    let r = Math.floor(Math.random() * 60);
+    let g = Math.floor(Math.random() * 60);
+    let b = Math.floor(Math.random() * 80);
+    document.body.style.backgroundColor = `rgb(${r},${g},${b})`;
+    closeSideMenu();
+}
+
+// 清空缓存
+function clearLocalData() {
+    localStorage.clear();
+    sessionStorage.clear();
+    alert("✅ 本地缓存已清空，页面即将刷新");
+    location.reload();
+}
+</script>
+
+</body>
+</html>
